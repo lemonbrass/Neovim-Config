@@ -50,6 +50,7 @@ vim.opt.tabstop = 2
 vim.opt.termguicolors = true
 vim.g.mapleader = ' '
 vim.opt.scrolloff = 999
+vim.loader.enable()
 
 -- Catppuccin theme setup
 require('catppuccin').setup({
