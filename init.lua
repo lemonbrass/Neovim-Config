@@ -1,4 +1,3 @@
--- Auto-install packer if not present
 local ensure_packer = function()
   local fn = vim.fn
   local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
@@ -19,10 +18,9 @@ vim.cmd([[
   augroup end
 ]])
 
--- Plugin management with packer.nvim
 require('packer').startup(function(use)
   use 'wbthomason/packer.nvim'
-  use 'Airbus5717/c3.vim'       -- C3 syntax highlighting
+  use 'Airbus5717/c3.vim'
   use 'neovim/nvim-lspconfig'
   use 'hrsh7th/nvim-cmp'
   use 'hrsh7th/cmp-nvim-lsp'
@@ -30,10 +28,10 @@ require('packer').startup(function(use)
   use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }
   use 'kyazdani42/nvim-tree.lua'
   use 'nvim-lualine/lualine.nvim'
-  use 'hrsh7th/cmp-buffer' -- Buffer source for nvim-cmp
-  use 'hrsh7th/cmp-path' -- Path source for nvim-cmp
-  use 'hrsh7th/cmp-cmdline' -- Command line source for nvim-cmp
-  use 'saadparwaiz1/cmp_luasnip' -- Snippet source for nvim-cmp
+  use 'hrsh7th/cmp-buffer'
+  use 'hrsh7th/cmp-path'
+  use 'hrsh7th/cmp-cmdline'
+  use 'saadparwaiz1/cmp_luasnip'
   use { "catppuccin/nvim", as = "catppuccin" }
 
   if packer_bootstrap then
@@ -41,7 +39,6 @@ require('packer').startup(function(use)
   end
 end)
 
--- General Neovim settings
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.expandtab = true
@@ -52,17 +49,13 @@ vim.g.mapleader = ' '
 vim.opt.scrolloff = 999
 vim.loader.enable()
 
--- Catppuccin theme setup
 require('catppuccin').setup({
-  flavour = 'macchiato', -- Options: latte, frappe, macchiato, mocha
+  flavour = 'macchiato',
   transparent_background = false,
   term_colors = true,
 })
-
 vim.cmd('colorscheme catppuccin-macchiato')
 
-
--- LSP and Autocompletion setup
 local lspconfig = require('lspconfig')
 local cmp = require'cmp'
 
@@ -84,9 +77,6 @@ cmp.setup({
   }),
 })
 
-
-
--- Treesitter setup for syntax highlighting
 require'nvim-treesitter.configs'.setup {
   ensure_installed = { "lua", "python", "c", "cpp", "asm", "rust" },
   highlight = {
@@ -94,15 +84,11 @@ require'nvim-treesitter.configs'.setup {
   },
 }
 
--- Nvim-tree setup
 require'nvim-tree'.setup {}
 
--- Lualine setup
 require('lualine').setup {
   options = { theme = 'gruvbox' }
 }
-
-local lspconfig = require 'lspconfig'
 
 local configs = require 'lspconfig.configs'
 
@@ -116,7 +102,7 @@ if not configs.c3_lsp then
   }
 end
 
-lspconfig.c3_lsp.setup{
+lspconfig.c3_lsp.setup {
     on_attach = function(client, bufnr)
         local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
         local opts = { noremap=true, silent=true }
@@ -137,22 +123,21 @@ lspconfig.c3_lsp.setup{
         if client.server_capabilities.documentFormattingProvider then
             vim.api.nvim_command [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format({ async = true })]]
         end
+
+        if client.server_capabilities.completionProvider then
+            cmp.setup.buffer { sources = { { name = 'nvim_lsp' } } }
+        end
     end,
 }
 
-
--- Setup LSP server for C/C++
 lspconfig.clangd.setup {
   on_attach = function(client, bufnr)
     local opts = { noremap=true, silent=true }
     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  ['<Tab>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
   end,
 }
 
--- Keybinding for file explorer
 vim.api.nvim_set_keymap('n', '<leader>e', ':NvimTreeToggle<CR>', { noremap = true, silent = true })
-
