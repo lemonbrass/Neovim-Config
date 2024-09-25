@@ -84,28 +84,11 @@ cmp.setup({
   }),
 })
 
---[[
--- Example LSP setup for custom language
-lspconfig.custom_lsp.setup{
-  cmd = { "/path/to/custom-lsp" },
-  filetypes = { "c3" },
-  root_dir = lspconfig.util.root_pattern(".git", "main.c3"),
-  settings = {
-    customLspConfig = {
-      option1 = true,
-      option2 = false,
-    }
-  },
-  on_attach = function(client, bufnr)
-    local bufopts = { noremap=true, silent=true, buffer=bufnr }
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', bufopts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', bufopts)
-  end,
-}
-}]]
+
+
 -- Treesitter setup for syntax highlighting
 require'nvim-treesitter.configs'.setup {
-  ensure_installed = { "lua", "python", "javascript", "html", "css" },
+  ensure_installed = { "lua", "python", "c", "cpp", "asm", "rust" },
   highlight = {
     enable = true,
   },
@@ -120,6 +103,43 @@ require('lualine').setup {
 }
 
 local lspconfig = require 'lspconfig'
+
+local configs = require 'lspconfig.configs'
+
+if not configs.c3_lsp then
+  configs.c3_lsp = {
+    default_config = {
+      cmd = { 'bash', '-c', 'c3lsp' },
+      root_dir = lspconfig.util.root_pattern('.git', 'project.json'),
+      filetypes = { 'c3' },
+    },
+  }
+end
+
+lspconfig.c3_lsp.setup{
+    on_attach = function(client, bufnr)
+        local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+        local opts = { noremap=true, silent=true }
+
+        buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+        buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+        buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+        buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+        buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+        buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+        buf_set_keymap('n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+        buf_set_keymap('n', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+        buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
+        buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+        buf_set_keymap('n', '<leader>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+        buf_set_keymap('n', '<leader>f', '<cmd>lua vim.lsp.buf.format({ async = true })<CR>', opts)
+
+        if client.server_capabilities.documentFormattingProvider then
+            vim.api.nvim_command [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format({ async = true })]]
+        end
+    end,
+}
+
 
 -- Setup LSP server for C/C++
 lspconfig.clangd.setup {
