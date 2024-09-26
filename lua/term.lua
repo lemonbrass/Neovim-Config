@@ -5,11 +5,13 @@ open_terminal_split = function()
   vim.cmd("split term://bash")
   vim.cmd("resize 15")
   vim.cmd("startinsert")
+  set_terminal_keymaps()
 end
 
 open_terminal_vsplit = function()
   vim.cmd("vsplit term://bash")
   vim.cmd("startinsert")
+  set_terminal_keymaps()
 end
 
 floating_term = nil
@@ -27,6 +29,7 @@ open_floating_terminal = function()
     })
     vim.cmd('term')
     vim.cmd('startinsert')
+    set_terminal_keymaps()
   else
     if vim.api.nvim_win_is_valid(floating_term) then
       vim.api.nvim_win_close(floating_term, true)
@@ -35,7 +38,11 @@ open_floating_terminal = function()
   end
 end
 
-
+-- Function to set terminal keymaps
+set_terminal_keymaps = function()
+  local bufnr = vim.api.nvim_get_current_buf()
+  vim.api.nvim_buf_set_keymap(bufnr, 't', '<Esc>', [[<C-\><C-n>]], { noremap = true, silent = true })
+end
 
 function comment_selection(comment_string)
     local _, srow, scol, _ = unpack(vim.fn.getpos("'<"))
@@ -58,8 +65,6 @@ function uncomment_selection(comment_string)
     end
 end
 
-
-
 -- Key mappings
 vim.api.nvim_set_keymap('n', 'th', ':lua open_terminal_split()<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', 'tv', ':lua open_terminal_vsplit()<CR>', { noremap = true, silent = true })
@@ -72,4 +77,3 @@ vim.api.nvim_set_keymap('v', 'cm', [[:lua comment_selection('--')<CR>]], { norem
 vim.api.nvim_set_keymap('v', 'uc', [[:lua uncomment_selection('//')<CR>]], { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', 'um', [[:lua uncomment_selection('--')<CR>]], { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', 'uh', [[:lua uncomment_selection('#')<CR>]], { noremap = true, silent = true })
-
