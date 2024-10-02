@@ -20,7 +20,7 @@ vim.cmd([[
 
 return require('packer').startup(function(use)
   use 'wbthomason/packer.nvim'
-  use 'Airbus5717/c3.vim'
+--  use 'Airbus5717/c3.vim'
   use 'neovim/nvim-lspconfig'
   use 'hrsh7th/nvim-cmp'
   use 'hrsh7th/cmp-nvim-lsp'
@@ -38,3 +38,4 @@ return require('packer').startup(function(use)
     require('packer').sync()
   end
 end)
+
