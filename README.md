@@ -1,9 +1,9 @@
 ## Introduction
 This is a very minimal neovim config with builtin lsp and treesitter support for:
 
-Rust
-C3 (https://c3-lang.org)
-C/C++
+- Rust
+- C3 (https://c3-lang.org)
+- C/C++
 
 ## Builtins
 c-c to comment a c code (with //)
