@@ -33,6 +33,7 @@ return require('packer').startup(function(use)
   use 'hrsh7th/cmp-cmdline'
   use 'saadparwaiz1/cmp_luasnip'
   use { "catppuccin/nvim", as = "catppuccin" }
+  use "oxfist/night-owl.nvim"
 
   if packer_bootstrap then
     require('packer').sync()

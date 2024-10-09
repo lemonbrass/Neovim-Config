@@ -20,7 +20,7 @@ cmp.setup({
 })
 
 require'nvim-treesitter.configs'.setup {
-  ensure_installed = { "lua", "python", "c", "cpp", "asm", "rust" },
+  ensure_installed = { "lua", "python", "c", "cpp", "asm", "rust", "c3" },
   highlight = {
     enable = true,
   },

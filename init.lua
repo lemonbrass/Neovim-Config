@@ -17,6 +17,23 @@ require('catppuccin').setup({
   transparent_background = false,
   term_colors = true,
 })
-vim.cmd('colorscheme catppuccin-macchiato')
+
+local night_owl = require("night-owl")
+
+ night_owl.setup({
+     bold = true,
+     italics = false,
+     underline = true,
+     undercurl = true,
+     transparent_background = false,
+})
+
+-- vim.cmd('colorscheme catppuccin-macchiato')
+
+vim.api.nvim_create_autocmd("ColorScheme", {
+  pattern = "*",
+  command = "highlight Boolean guifg=#ff5f87"
+})
+vim.cmd('colorscheme night-owl')
 
 vim.api.nvim_set_keymap('n', '<leader>e', ':NvimTreeToggle<CR>', { noremap = true, silent = true })
