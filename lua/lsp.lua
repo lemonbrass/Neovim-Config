@@ -32,17 +32,14 @@ require('lualine').setup {
   options = { theme = 'gruvbox' }
 }
 
-lspconfig.c3_lsp.setup {
+
+lspconfig.rust_analyzer.setup {
   on_attach = function(client, bufnr)
     local opts = { noremap=true, silent=true }
     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>f', '<cmd>lua vim.lsp.buf.format({ async = true })<CR>', opts)
-
-    if client.server_capabilities.documentFormattingProvider then
-      vim.api.nvim_command [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format({ async = true })]]
-    end
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
   end,
 }
 
